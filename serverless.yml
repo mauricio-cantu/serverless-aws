@@ -1,0 +1,36 @@
+service: serverless-aws
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  region: sa-east-1
+  memorySize: 256
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+      Resource:
+        - "arn:aws:s3:::*"
+
+functions:
+  optimize:
+    handler: optimize.run
+    environment:
+      bucket: node-serverless-cantu
+    events:
+      - s3:
+        bucket: node-serverless-cantu
+        event: s3:ObjectCreated:*
+        rules:
+          - prefix: uploads/
+          - suffix: .jpg
+      - s3:
+        bucket: node-serverless-cantu
+        event: s3:ObjectCreated:*
+        rules:
+          - prefix: uploads/
+          - suffix: .png
